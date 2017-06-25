@@ -1,13 +1,14 @@
-module divider(input wire reset, input wire in_clk, output reg output_clk);
+module divider(input wire reset, input wire in_clk, output wire output_sync);
 
 reg [7:0]counter;
+reg div_out_prev, div_out;
 
 always @(posedge in_clk)
 begin
 	if (reset == 1'b1)
 	begin
 		counter <= 8'd0;
-		output_clk <= 1'b0;
+		div_out <= 1'b0;
 	end
 	else
 	begin
@@ -16,8 +17,11 @@ begin
 		if (counter == 8'd107)
 		begin
 			counter <= 8'd0;
-			output_clk <= !output_clk;
+			div_out <= !div_out;
 		end
 	end
+	
+	div_out_prev <= div_out;
 end
+	assign output_sync = ~div_out_prev & div_out;
 endmodule

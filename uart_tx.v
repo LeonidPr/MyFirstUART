@@ -1,4 +1,4 @@
-module uart_tx(input wire clk, input wire rst, input wire tx_start, input wire [7:0]tx_in, output reg tx_out, output reg tx_finish);
+module uart_tx(input wire clk, input wire sync, input wire rst, input wire tx_start, input wire [7:0]tx_in, output reg tx_out, output reg tx_finish);
 parameter [1:0]STATE_IDLE	= 2'b00;
 parameter [1:0]STATE_TX_START	=2'b01;
 parameter [1:0]STATE_TX_DATA	=2'b10;
@@ -21,6 +21,8 @@ begin
 		tx_out <= 1;
 	end
 	else
+	begin
+	if (sync == 1)
 	begin
 		case (state)
 		STATE_IDLE:
@@ -60,7 +62,6 @@ begin
 				tx_finish <= 1;
 			end
 		endcase
-    end
     
 	 //divide clock by 2
     if (state != STATE_IDLE)
@@ -68,6 +69,8 @@ begin
             clk_count <= clk_count + 2'b01;
         else
             clk_count <= 2'b00;
+	  end
+	end
 end
 
 endmodule

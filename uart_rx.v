@@ -1,4 +1,4 @@
-module uart_rx(input wire clk, input wire rst, input wire rx, output reg [7:0]out, output reg recv_finish);
+module uart_rx(input wire clk, input wire sync, input wire rst, input wire rx, output reg [7:0]out, output reg recv_finish);
 parameter [1:0]STATE_IDLE	=2'b00;
 parameter [1:0]STATE_RX_START	=2'b01;
 parameter [1:0]STATE_RX_STOP	=2'b10;
@@ -20,6 +20,8 @@ begin
 		bit_count <= 0;
 	end
 	else
+	begin
+	if (sync == 1)
 	begin
 		case (state)
 		STATE_IDLE:
@@ -59,12 +61,13 @@ begin
 					if (rx == 1)
 					begin
 						out <= data;
-						recv_finish = 1;
+						recv_finish <= 1;
 						state <= STATE_IDLE;
 					end
 		    end
 		end
 		endcase
+	end
 	end
 end
 
